@@ -1,8 +1,8 @@
 {
-  "name": "mp3js",
+  "name": "mp3info",
   "version": "0.0.1",
-  "description": "A library to read mp3 informantion and read/write id3 tags",
-  "main": "index.js",
+  "description": "Get information about the MP3 including its duration",
+  "main": "mp3info.js",
   "types": "types.d.ts",
   "scripts": {
     "test": "jest --passWithNoTests --no-cache --runInBand",
@@ -10,8 +10,25 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Keony1/mp3info"
+  },
+  "keywords": [
+    "mp3",
+    "metadata",
+    "audio",
+    "duration",
+    "length"
+  ],
+  "files": [
+    "mp3info.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "homepage": "https://github.com/Keony1/mp3info",
   "author": "Keony Willian Schröer",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.3.0",
     "eslint": "^9.3.0",
