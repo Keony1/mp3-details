@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A library to read mp3 informantion and read/write id3 tags",
   "main": "index.js",
+  "types": "types.d.ts",
   "scripts": {
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "lint": "eslint .",

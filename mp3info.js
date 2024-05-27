@@ -154,6 +154,8 @@ class Mp3Info {
   }
 }
 
+let fd
+let fileSize
 /*
  *
  * @typedef {Object} Info
@@ -164,28 +166,52 @@ class Mp3Info {
  * @property {version} version
  */
 
-let fd
-let fileSize
 /**
- * Loads the MP3 metadata (id3 tags not included)
- *
+ * @overload
  * @param {string} path
- * @return {Info}
- *         The metadata of the MP3
+ * @returns {Info}
  */
-function load(path) {
-  fd = fs.openSync(path)
-  fileSize = fs.statSync(path).size
 
-  let pos = id3Size()
-  const frameHeader = mp3FrameHeader(pos)
-  if (frameHeader === null) {
+/**
+ * @overload
+ * @param {Buffer} buffer
+ * @param {number} fileSize
+ * @returns {Info}
+ */
+
+/**
+ * Loads the MP3 metadata
+ */
+function load(arg1, arg2) {
+  if (typeof arg1 === 'string') {
+    return loadFromPath(arg1)
+  } else if (arg1 instanceof Buffer && typeof arg2 === 'number') {
+    return loadFromBuffer(arg1, arg2)
+  }
+
+  throw new Error('Invalid arguments')
+}
+
+/**
+ * @param {Buffer} buffer
+ * @param {number} size
+ */
+function loadFromBuffer(buffer, size) {
+  fileSize = size
+  const id3Buff = buffer.subarray(0, 10)
+  let pos = id3Size(id3Buff)
+
+  const frameHeader = buffer.subarray(pos, pos + 4)
+  console.log(frameHeader)
+  if (!mp3FrameHeader(frameHeader)) {
     throw new Error('Not a valid MP3 file')
   }
   pos += frameHeader.length
-  const frameXingHeader = xingHeader(pos + 10) // 10 is the offset from the headerframe
+  const xingBuffer = buffer.subarray(pos + 10, pos + 10 + 40)
 
-  const reader = new Mp3Info(frameHeader, frameXingHeader)
+  const xingFrameHeader = xingHeader(xingBuffer)
+
+  const reader = new Mp3Info(frameHeader, xingFrameHeader)
   const duration = reader.getDuration()
   const bitrate = reader.getBitrate()
   const layer = reader.getLayer()
@@ -195,7 +221,37 @@ function load(path) {
   return { duration, bitrate, frequency, layer, version }
 }
 
-function xingHeader(pos) {
+function loadFromPath(path) {
+  fd = fs.openSync(path)
+  fileSize = fs.statSync(path).size
+
+  const id3Buffer = Buffer.alloc(10)
+  fs.readSync(fd, id3Buffer)
+  let pos = id3Size(id3Buffer)
+
+  const frameHeader = Buffer.alloc(4)
+  fs.readSync(fd, frameHeader, 0, frameHeader.length, pos)
+  if (!mp3FrameHeader(frameHeader)) {
+    throw new Error('Not a valid MP3 file')
+  }
+  pos += frameHeader.length
+
+  const xingBuffer = Buffer.alloc(40)
+  fs.readSync(fd, xingBuffer, 0, xingBuffer.length, pos + 10)
+
+  const xingFrameHeader = xingHeader(xingBuffer)
+
+  const reader = new Mp3Info(frameHeader, xingFrameHeader)
+  const duration = reader.getDuration()
+  const bitrate = reader.getBitrate()
+  const layer = reader.getLayer()
+  const version = reader.getMPEGVersion()
+  const frequency = reader.getFrequency()
+
+  return { duration, bitrate, frequency, layer, version }
+}
+
+function xingHeader(buffer) {
   const IDENTIFIER_SIZE = 4
   const FLAGS_SIZE = 4
   const FRAMES_SIZE = 4
@@ -203,8 +259,6 @@ function xingHeader(pos) {
   const TOC_SIZE = 100
   const VBR_SIZE = 4
 
-  let buffer = Buffer.alloc(40)
-  fs.readSync(fd, buffer, 0, buffer.length, pos)
   let size = 0
   let offset = 0
 
@@ -250,32 +304,23 @@ function xingHeader(pos) {
  * @param {number} pos
  * @returns {Buffer | null} The MP3 frame header bytes, returns null if not found
  */
-function mp3FrameHeader(pos) {
-  const buffer = Buffer.alloc(4)
-  fs.readSync(fd, buffer, 0, buffer.length, pos)
-
+function mp3FrameHeader(buffer) {
   if ((buffer[0] === 0xff) & ((buffer[1] & 0xc0) === 0xc0)) {
-    return buffer
+    return 4
   }
-
-  return null
+  return 0
 }
 
 /**
- * Only supports ID3v2
- * @returns the size in bytes of the ID3 segment
+ * @param {Buffer} buffer
  */
-function id3Size() {
+function id3Size(buffer) {
   const HEADER_SIZE = 10
-  const buffer = Buffer.alloc(HEADER_SIZE)
-  fs.readSync(fd, buffer)
-
   if (buffer.toString('utf8', 0, 3) !== 'ID3') {
     return 0
   }
 
-  const headerSize = 10
-  if (buffer.length < headerSize) {
+  if (buffer.length < HEADER_SIZE) {
     return 0
   }
 
