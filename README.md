@@ -1,4 +1,4 @@
-# mp3info
+# mp3-details
 
 Get the information about the MP3 file, including its duration in **milliseconds**
 
@@ -13,7 +13,7 @@ Supports MP3 files with:
 ## Usage
 
 ```javascript
-const mp3info = require('mp3info')
+const mp3info = require('mp3-details')
 
 // Load MP3 info from a path
 const info = mp3info.load('file.mp3')

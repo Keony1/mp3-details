@@ -1,8 +1,8 @@
 {
-  "name": "mp3info",
-  "version": "0.0.1",
+  "name": "mp3-details",
+  "version": "0.1.0",
   "description": "Get information about the MP3 including its duration",
-  "main": "mp3info.js",
+  "main": "mp3-details.js",
   "types": "types.d.ts",
   "scripts": {
     "test": "jest --passWithNoTests --no-cache --runInBand",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/Keony1/mp3info"
+    "url": "git://github.com/Keony1/mp3-details"
   },
   "keywords": [
     "mp3",
@@ -22,11 +22,11 @@
     "length"
   ],
   "files": [
-    "mp3info.js",
+    "mp3-details.js",
     "README.md",
     "LICENSE"
   ],
-  "homepage": "https://github.com/Keony1/mp3info",
+  "homepage": "https://github.com/Keony1/mp3-details",
   "author": "Keony Willian Schröer",
   "license": "MIT",
   "devDependencies": {

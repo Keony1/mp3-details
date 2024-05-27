@@ -1,4 +1,4 @@
-const mp3Info = require('../mp3info')
+const mp3Info = require('../mp3-details')
 
 describe('buffer', () => {
   it('cbr [plane mp3]', () => {
