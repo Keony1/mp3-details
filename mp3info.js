@@ -95,6 +95,8 @@ class Mp3Info {
       // for versions 2 and 2.5
       return 576
     }
+
+    throw new Error(`Layer ${layer} not supported`)
   }
 
   getMPEGVersion() {
@@ -202,7 +204,6 @@ function loadFromBuffer(buffer, size) {
   let pos = id3Size(id3Buff)
 
   const frameHeader = buffer.subarray(pos, pos + 4)
-  console.log(frameHeader)
   if (!mp3FrameHeader(frameHeader)) {
     throw new Error('Not a valid MP3 file')
   }
