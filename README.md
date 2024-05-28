@@ -1,6 +1,6 @@
 # mp3-details
 
-Get the information about the MP3 file, including its duration in **milliseconds**
+Get the information about the MP3 file, including its duration **blazingly fast**
 
 **Free of dependencies**.
 
