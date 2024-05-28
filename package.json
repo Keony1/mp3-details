@@ -24,7 +24,8 @@
   "files": [
     "mp3-details.js",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "types.d.ts"
   ],
   "homepage": "https://github.com/Keony1/mp3-details",
   "author": "Keony Willian Schröer",
