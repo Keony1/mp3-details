@@ -208,7 +208,7 @@ function loadFromBuffer(buffer, size) {
     throw new Error('Not a valid MP3 file')
   }
   pos += frameHeader.length
-  const xingBuffer = buffer.subarray(pos + 10, pos + 10 + 40)
+  const xingBuffer = buffer.subarray(pos + 5, pos + 10 + 40)
 
   const xingFrameHeader = xingHeader(xingBuffer)
 
@@ -238,7 +238,7 @@ function loadFromPath(path) {
   pos += frameHeader.length
 
   const xingBuffer = Buffer.alloc(40)
-  fs.readSync(fd, xingBuffer, 0, xingBuffer.length, pos + 10)
+  fs.readSync(fd, xingBuffer, 0, xingBuffer.length, pos + 5)
 
   const xingFrameHeader = xingHeader(xingBuffer)
 
